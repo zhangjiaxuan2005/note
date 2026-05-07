@@ -1,332 +1,307 @@
 # Day7 接口与抽象类
 
-## 一、接口（Interface）
+## 一、Java 接口
 
-### 1.1 接口的定义
+接口（Interface）是一个抽象类型，是抽象方法的集合，接口通常以 `interface` 来声明。一个类通过实现接口的方式，从而来继承接口的抽象方法。
+
+### 1.1 接口与类的区别
+
+| 特性 | 接口 | 类 |
+|------|------|----|
+| 实例化 | 不能被实例化 | 可以被实例化 |
+| 构造方法 | 没有 | 有 |
+| 方法 | 默认为 `public abstract`（Java 8+ 可有默认方法） | 可以有各种方法 |
+| 成员变量 | 只能是 `public static final` 常量 | 可以有各种类型 |
+| 继承方式 | implements | extends |
+| 多重继承 | 支持 | 不支持 |
+
+### 1.2 接口的声明
+
+接口的声明语法格式如下：
 
 ```java
-public interface Flyable {
-    // 常量（默认 public static final）
-    int MAX_HEIGHT = 10000;
-    
-    // 抽象方法（默认 public abstract）
-    void fly();
-    
-    // 抽象方法
-    void land();
-    
-    // Java 8+ 默认方法
-    default void prepareForFlight() {
-        System.out.println("准备起飞...");
-    }
-    
-    // Java 8+ 静态方法
-    static void checkWeather() {
-        System.out.println("检查天气状况");
-    }
+[可见度] interface 接口名称 [extends 其他的接口名] {
+    // 常量声明
+    // 抽象方法声明
+    // 默认方法（Java 8+）
+    // 静态方法（Java 8+）
 }
 ```
 
-### 1.2 接口的实现
+### 1.3 接口示例
 
-```java
-// 实现接口使用 implements 关键字
-public class Bird implements Flyable {
-    private String name;
-    
-    public Bird(String name) {
-        this.name = name;
-    }
-    
-    // 必须实现接口的所有抽象方法
-    @Override
-    public void fly() {
-        System.out.println(name + "正在飞翔");
-    }
-    
-    @Override
-    public void land() {
-        System.out.println(name + "正在降落");
-    }
-    
-    // 可以选择性地重写默认方法
-    @Override
-    public void prepareForFlight() {
-        Flyable.super.prepareForFlight();
-        System.out.println(name + "展开翅膀");
-    }
-}
-```
-
-### 1.3 接口的特点
-- 接口不能被实例化
-- 接口中的方法默认是 `public abstract`（Java 8+ 可以有默认方法和静态方法）
-- 接口中的属性默认是 `public static final`（常量）
-- 一个类可以实现多个接口
-- 接口可以继承其他接口
-
-### 1.4 多接口实现
-
-```java
-interface Swimable {
-    void swim();
-}
-
-interface Runnable {
-    void run();
-}
-
-// 一个类可以实现多个接口
-public class Duck implements Flyable, Swimable, Runnable {
-    @Override
-    public void fly() {
-        System.out.println("鸭子飞翔");
-    }
-    
-    @Override
-    public void land() {
-        System.out.println("鸭子降落");
-    }
-    
-    @Override
-    public void swim() {
-        System.out.println("鸭子游泳");
-    }
-    
-    @Override
-    public void run() {
-        System.out.println("鸭子奔跑");
-    }
-}
-```
-
-### 1.5 接口继承
+**Animal.java 文件代码：**
 
 ```java
 interface Animal {
-    void eat();
-    void sleep();
+    // 常量（默认 public static final）
+    int MAX_AGE = 100;
+    
+    // 抽象方法（默认 public abstract）
+    public void eat();
+    public void travel();
 }
+```
 
-// 接口可以继承其他接口
-interface FlyingAnimal extends Animal {
-    void fly();
-}
+### 1.4 接口的实现
 
-public class Eagle implements FlyingAnimal {
-    @Override
+当类实现接口的时候，类要实现接口中所有的方法。否则，类必须声明为抽象的类。
+
+**MammalInt.java 文件代码：**
+
+```java
+public class MammalInt implements Animal {
     public void eat() {
-        System.out.println("鹰吃猎物");
+        System.out.println("Mammal eats");
     }
     
-    @Override
-    public void sleep() {
-        System.out.println("鹰在树上睡觉");
+    public void travel() {
+        System.out.println("Mammal travels");
     }
     
-    @Override
-    public void fly() {
-        System.out.println("鹰在高空飞翔");
+    public int noOfLegs() {
+        return 0;
+    }
+    
+    public static void main(String args[]) {
+        MammalInt m = new MammalInt();
+        m.eat();
+        m.travel();
     }
 }
 ```
 
-## 二、抽象类（Abstract Class）
+以上实例编译运行结果如下：
 
-### 2.1 抽象类的定义
+```
+Mammal eats
+Mammal travels
+```
+
+### 1.5 接口的继承
+
+一个接口能继承另一个接口，使用 `extends` 关键字。
 
 ```java
-public abstract class Animal {
-    // 普通成员变量
-    protected String name;
-    protected int age;
+public interface Sports {
+    public void setHomeTeam(String name);
+    public void setVisitingTeam(String name);
+}
+
+public interface Football extends Sports {
+    public void homeTeamScored(int points);
+    public void visitingTeamScored(int points);
+    public void endOfQuarter(int quarter);
+}
+```
+
+### 1.6 接口的多继承
+
+在 Java 中，类的多继承是不合法的，但接口允许多继承。
+
+```java
+public interface Hockey extends Sports, Event {
+    // 继承了 Sports 和 Event 接口的方法
+}
+```
+
+---
+
+## 二、Java 抽象类
+
+在面向对象的概念中，所有的对象都是通过类来描绘的，但并不是所有的类都是用来描绘对象的。如果一个类中没有包含足够的信息来描绘一个具体的对象，这样的类就是抽象类。
+
+### 2.1 抽象类的特点
+
+- 抽象类不能被实例化
+- 抽象类必须被继承才能使用
+- 抽象类可以包含抽象方法和普通方法
+- 抽象类可以包含构造方法和成员变量
+
+### 2.2 抽象类的定义
+
+使用 `abstract class` 来定义抽象类。
+
+**Employee.java 文件代码：**
+
+```java
+public abstract class Employee {
+    private String name;
+    private String address;
+    private int number;
     
-    // 构造方法
-    public Animal(String name, int age) {
+    public Employee(String name, String address, int number) {
+        System.out.println("Constructing an Employee");
         this.name = name;
-        this.age = age;
+        this.address = address;
+        this.number = number;
     }
     
-    // 普通方法
-    public void sleep() {
-        System.out.println(name + "正在睡觉");
+    public double computePay() {
+        System.out.println("Inside Employee computePay");
+        return 0.0;
     }
     
-    // 抽象方法（没有实现，必须由子类实现）
-    public abstract void eat();
+    public void mailCheck() {
+        System.out.println("Mailing a check to " + this.name + " " + this.address);
+    }
     
     // 抽象方法
-    public abstract void makeSound();
+    public abstract double calculateBonus();
 }
 ```
 
-### 2.2 抽象类的继承
+### 2.3 继承抽象类
+
+**Salary.java 文件代码：**
 
 ```java
-// 继承抽象类，必须实现所有抽象方法
-public class Dog extends Animal {
-    private String breed;
+public class Salary extends Employee {
+    private double salary;
     
-    public Dog(String name, int age, String breed) {
-        super(name, age);
-        this.breed = breed;
+    public Salary(String name, String address, int number, double salary) {
+        super(name, address, number);
+        setSalary(salary);
     }
     
-    @Override
-    public void eat() {
-        System.out.println(name + "正在吃狗粮");
+    public void mailCheck() {
+        System.out.println("Within mailCheck of Salary class ");
+        System.out.println("Mailing check to " + getName() + " with salary " + salary);
     }
     
+    public double getSalary() {
+        return salary;
+    }
+    
+    public void setSalary(double newSalary) {
+        if (newSalary >= 0.0) {
+            salary = newSalary;
+        }
+    }
+    
+    public double computePay() {
+        System.out.println("Computing salary pay for " + getName());
+        return salary / 52;
+    }
+    
+    // 实现抽象方法
     @Override
-    public void makeSound() {
-        System.out.println("汪汪汪");
+    public double calculateBonus() {
+        return salary * 0.1;
     }
 }
 ```
 
-### 2.3 抽象类的特点
-- 抽象类不能被实例化
-- 抽象类可以包含抽象方法和普通方法
-- 抽象类可以包含构造方法
-- 抽象类可以包含成员变量
-- 子类继承抽象类时必须实现所有抽象方法
-
-## 三、接口与抽象类的区别
-
-| 特性 | 接口 | 抽象类 |
-|------|------|--------|
-| 继承方式 | implements | extends |
-| 多重继承 | 支持（一个类可实现多个接口） | 不支持（一个类只能继承一个抽象类） |
-| 方法实现 | 抽象方法（Java 8+ 可有默认/静态方法） | 可以有抽象方法和具体方法 |
-| 成员变量 | 只能是常量（public static final） | 可以有普通成员变量 |
-| 构造方法 | 没有 | 可以有 |
-| 使用场景 | 定义行为规范，强调"能做什么" | 定义模板，强调"是什么" |
-
-## 四、设计模式应用
-
-### 4.1 策略模式（Strategy Pattern）
+**AbstractDemo.java 文件代码：**
 
 ```java
-// 策略接口
-interface PaymentStrategy {
-    void pay(double amount);
-}
-
-// 具体策略类
-class CreditCardPayment implements PaymentStrategy {
-    @Override
-    public void pay(double amount) {
-        System.out.println("使用信用卡支付: " + amount);
-    }
-}
-
-class WeChatPayment implements PaymentStrategy {
-    @Override
-    public void pay(double amount) {
-        System.out.println("使用微信支付: " + amount);
-    }
-}
-
-class AlipayPayment implements PaymentStrategy {
-    @Override
-    public void pay(double amount) {
-        System.out.println("使用支付宝支付: " + amount);
-    }
-}
-
-// 上下文类
-class ShoppingCart {
-    private PaymentStrategy paymentStrategy;
-    
-    public void setPaymentStrategy(PaymentStrategy strategy) {
-        this.paymentStrategy = strategy;
-    }
-    
-    public void checkout(double amount) {
-        paymentStrategy.pay(amount);
+public class AbstractDemo {
+    public static void main(String[] args) {
+        Salary s = new Salary("Mohd Mohtashim", "Ambehta, UP", 3, 3600.00);
+        Employee e = new Salary("John Adams", "Boston, MA", 2, 2400.00);
+        
+        System.out.println("Call mailCheck using Salary reference --");
+        s.mailCheck();
+        
+        System.out.println("\nCall mailCheck using Employee reference--");
+        e.mailCheck();
     }
 }
 ```
 
-### 4.2 模板方法模式（Template Method Pattern）
+以上程序编译运行结果如下：
+
+```
+Constructing an Employee
+Constructing an Employee
+Call mailCheck using Salary reference --
+Within mailCheck of Salary class
+Mailing check to Mohd Mohtashim with salary 3600.0
+
+Call mailCheck using Employee reference--
+Within mailCheck of Salary class
+Mailing check to John Adams with salary 2400.0
+```
+
+### 2.4 抽象方法
+
+抽象方法只包含一个方法名，而没有方法体。
 
 ```java
-abstract class Game {
-    // 模板方法
-    public final void play() {
-        initialize();
-        startPlay();
-        endPlay();
-    }
-    
-    protected abstract void initialize();
-    protected abstract void startPlay();
-    protected abstract void endPlay();
-}
-
-class Football extends Game {
-    @Override
-    protected void initialize() {
-        System.out.println("足球游戏初始化");
-    }
-    
-    @Override
-    protected void startPlay() {
-        System.out.println("足球游戏开始");
-    }
-    
-    @Override
-    protected void endPlay() {
-        System.out.println("足球游戏结束");
-    }
+public abstract class Employee {
+    // 抽象方法，没有方法体
+    public abstract double computePay();
 }
 ```
 
-## 五、函数式接口（Java 8+）
+声明抽象方法会造成以下两个结果：
+- 如果一个类包含抽象方法，那么该类必须是抽象类
+- 任何子类必须重写父类的抽象方法，或者声明自身为抽象类
 
-### 5.1 函数式接口的定义
+---
+
+## 三、抽象类和接口的区别
+
+| 特性 | 抽象类 | 接口 |
+|------|--------|------|
+| 方法实现 | 可以有方法体 | 不能有方法体（Java 8+ 默认方法除外） |
+| 成员变量 | 可以是各种类型 | 只能是 `public static final` |
+| 静态方法 | 可以有 | Java 8+ 可以有 |
+| 构造方法 | 可以有 | 没有 |
+| 继承 | 单继承 | 多继承 |
+| 设计目的 | 定义模板，强调"是什么" | 定义行为规范，强调"能做什么" |
+
+---
+
+## 四、Java 8 接口新特性
+
+### 4.1 默认方法
+
+使用 `default` 关键字修饰，可以在接口中提供方法的具体实现。
 
 ```java
-// 使用 @FunctionalInterface 注解
-@FunctionalInterface
-interface Calculator {
-    int calculate(int a, int b);
+interface Vehicle {
+    void start();
+    
+    default void stop() {
+        System.out.println("Vehicle stopped");
+    }
 }
 ```
 
-### 5.2 Lambda 表达式使用
+### 4.2 静态方法
+
+使用 `static` 关键字，可以在接口中定义静态方法。
 
 ```java
-// 使用 Lambda 表达式实现函数式接口
-Calculator add = (a, b) -> a + b;
-Calculator multiply = (a, b) -> a * b;
-
-System.out.println(add.calculate(5, 3));      // 8
-System.out.println(multiply.calculate(5, 3)); // 15
+interface Vehicle {
+    static void checkVehicle() {
+        System.out.println("Checking vehicle...");
+    }
+}
 ```
 
-### 5.3 常用内置函数式接口
+---
+
+## 五、标记接口
+
+标记接口是没有任何方法和属性的接口，它仅仅表明它的类属于一个特定的类型。
 
 ```java
-import java.util.function.*;
-
-// Predicate: 接收一个参数，返回布尔值
-Predicate<Integer> isEven = n -> n % 2 == 0;
-
-// Function: 接收一个参数，返回一个结果
-Function<String, Integer> length = s -> s.length();
-
-// Consumer: 接收一个参数，无返回值
-Consumer<String> print = s -> System.out.println(s);
-
-// Supplier: 无参数，返回一个结果
-Supplier<Double> random = () -> Math.random();
+public interface Serializable {
+    // 空接口，作为标记
+}
 ```
+
+标记接口的主要用途：
+1. 建立一个公共的父接口
+2. 向一个类添加数据类型
+
+---
 
 ## 六、练习
 
 1. 创建一个 `Shape` 接口，包含计算面积和周长的方法，然后创建 `Circle`、`Rectangle`、`Triangle` 类实现该接口
-2. 创建一个抽象类 `Vehicle`，包含抽象方法 `drive()`，然后创建 `Car`、`Motorcycle`、`Bicycle` 子类
-3. 使用策略模式实现不同的排序策略（冒泡排序、快速排序、插入排序）
-4. 使用函数式接口和 Lambda 表达式实现简单的计算器
-5. 分析何时使用接口，何时使用抽象类
+2. 创建一个抽象类 `Vehicle`，包含抽象方法 `drive()`，然后创建 `Car`、`Motorcycle` 子类
+3. 设计一个接口 `Playable`，包含 `play()` 方法，让 `MusicPlayer` 和 `VideoPlayer` 类实现它
+4. 区分什么时候应该使用接口，什么时候应该使用抽象类
