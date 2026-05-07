@@ -1,299 +1,669 @@
 # Day9 集合框架
 
-## 一、集合框架概述
+## 一、Java 集合框架概述
 
-### 1.1 集合框架层次结构
+早在 Java 2 之前，Java 就提供了特设类（如 Dictionary、Vector、Stack 和 Properties）来存储和操作对象组。但这些类缺少一个核心统一的主题，使用方式各不相同。
 
-```
-Collection
-├── List（有序、可重复）
-│   ├── ArrayList
-│   ├── LinkedList
-│   └── Vector
-├── Set（无序、不可重复）
-│   ├── HashSet
-│   ├── LinkedHashSet
-│   └── TreeSet
-└── Queue（队列）
-    ├── LinkedList
-    └── PriorityQueue
+集合框架被设计成要满足以下几个目标：
+- 高性能：基本集合的实现必须是高效的
+- 互操作性：允许不同类型的集合以类似的方式工作
+- 易扩展：对集合的扩展和适应必须是简单的
 
-Map（键值对）
-├── HashMap
-├── LinkedHashMap
-├── TreeMap
-└── Hashtable
-```
+整个集合框架围绕一组标准接口而设计，你可以直接使用这些接口的标准实现，也可以通过这些接口实现自己的集合。
 
-### 1.2 集合与数组的区别
+### 1.1 集合框架体系
 
-| 特性 | 数组 | 集合 |
-|------|------|------|
-| 大小 | 固定 | 动态 |
-| 类型 | 单一 | 多样 |
-| 方法 | 基本 | 丰富 |
-| 存储 | 基本类型/对象 | 对象 |
+Java 集合框架主要包括两种类型的容器：
+- **Collection（集合）**：存储一个元素集合
+- **Map（图）**：存储键/值对映射
 
-## 二、List 接口
+Collection 接口有 3 种子类型：List、Set 和 Queue，下面是一些抽象类，最后是具体实现类，常用的有 ArrayList、LinkedList、HashSet、HashMap 等。
 
-### 2.1 ArrayList
+### 1.2 集合接口
+
+| 接口 | 描述 |
+| --- | --- |
+| Collection | 最基本的集合接口，存储一组不唯一、无序的对象 |
+| List | 有序的 Collection，允许有相同元素，可通过索引访问 |
+| Set | 不保存重复的元素，存储一组唯一、无序的对象 |
+| Map | 存储一组键值对象，提供 key 到 value 的映射 |
+
+### 1.3 Set 和 List 的区别
+
+- Set 接口实例存储的是无序的、不重复的数据；List 接口实例存储的是有序的、可以重复的元素
+- Set 检索效率低下，删除和插入效率高；List 查找元素效率高，插入删除效率低
+
+---
+
+## 二、ArrayList
+
+ArrayList 类是一个可以动态修改的数组，与普通数组的区别是没有固定大小的限制，可以添加或删除元素。
+
+### 2.1 创建 ArrayList
 
 ```java
 import java.util.ArrayList;
-import java.util.List;
 
-public class ArrayListExample {
-    public static void main(String[] args) {
-        // 创建 ArrayList
-        List<String> names = new ArrayList<>();
-        
-        // 添加元素
-        names.add("张三");
-        names.add("李四");
-        names.add("王五");
-        
-        // 获取元素
-        String first = names.get(0);
-        System.out.println("第一个元素: " + first);
-        
-        // 修改元素
-        names.set(1, "赵六");
-        
-        // 删除元素
-        names.remove(2);
-        
-        // 遍历
-        for (String name : names) {
-            System.out.println(name);
-        }
-        
-        // 其他常用方法
-        System.out.println("大小: " + names.size());
-        System.out.println("是否为空: " + names.isEmpty());
-        System.out.println("是否包含: " + names.contains("张三"));
-    }
-}
+ArrayList<String> sites = new ArrayList<String>();
 ```
 
-### 2.2 LinkedList
+### 2.2 添加元素
 
 ```java
-import java.util.LinkedList;
+import java.util.ArrayList;
 
-public class LinkedListExample {
+public class RunoobTest {
     public static void main(String[] args) {
-        LinkedList<String> list = new LinkedList<>();
-        
-        // 添加元素
-        list.addFirst("第一个");
-        list.addLast("最后一个");
-        list.add(1, "中间");
-        
-        // 获取元素
-        System.out.println("第一个: " + list.getFirst());
-        System.out.println("最后一个: " + list.getLast());
-        
-        // 删除元素
-        list.removeFirst();
-        list.removeLast();
-        
-        // 队列操作
-        list.offer("A");
-        list.offer("B");
-        System.out.println("出队: " + list.poll());
-        
-        // 栈操作
-        list.push("X");
-        list.push("Y");
-        System.out.println("出栈: " + list.pop());
+        ArrayList<String> sites = new ArrayList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
+        System.out.println(sites);
     }
 }
 ```
 
-### 2.3 ArrayList vs LinkedList
+输出结果：
 
-| 特性 | ArrayList | LinkedList |
-|------|-----------|------------|
-| 底层实现 | 数组 | 双向链表 |
-| 随机访问 | 快 | 慢 |
-| 插入删除 | 慢（需移动元素） | 快 |
-| 内存占用 | 连续空间 | 每个节点有额外开销 |
+```
+[Google, Runoob, Taobao, Weibo]
+```
 
-## 三、Set 接口
-
-### 3.1 HashSet
+### 2.3 访问元素
 
 ```java
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
-public class HashSetExample {
+public class RunoobTest {
     public static void main(String[] args) {
-        Set<String> fruits = new HashSet<>();
-        
-        // 添加元素（自动去重）
-        fruits.add("苹果");
-        fruits.add("香蕉");
-        fruits.add("苹果"); // 重复，不会添加
-        
-        // 遍历
-        for (String fruit : fruits) {
-            System.out.println(fruit);
-        }
-        
-        // 常用方法
-        System.out.println("大小: " + fruits.size());
-        System.out.println("是否包含香蕉: " + fruits.contains("香蕉"));
-        fruits.remove("香蕉");
+        ArrayList<String> sites = new ArrayList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
+        System.out.println(sites.get(1)); // 访问第二个元素
     }
 }
 ```
 
-### 3.2 LinkedHashSet
+输出结果：
+
+```
+Runoob
+```
+
+### 2.4 修改元素
 
 ```java
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 
-public class LinkedHashSetExample {
+public class RunoobTest {
     public static void main(String[] args) {
-        // 保持插入顺序
-        LinkedHashSet<String> set = new LinkedHashSet<>();
-        set.add("D");
-        set.add("A");
-        set.add("B");
-        set.add("C");
-        
-        // 输出顺序与插入顺序一致
-        for (String item : set) {
-            System.out.println(item); // D, A, B, C
-        }
+        ArrayList<String> sites = new ArrayList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
+        sites.set(2, "Wiki"); // 修改第三个元素
+        System.out.println(sites);
     }
 }
 ```
 
-### 3.3 TreeSet
+输出结果：
+
+```
+[Google, Runoob, Wiki, Weibo]
+```
+
+### 2.5 删除元素
 
 ```java
-import java.util.TreeSet;
+import java.util.ArrayList;
 
-public class TreeSetExample {
+public class RunoobTest {
     public static void main(String[] args) {
-        // 自动排序
-        TreeSet<Integer> numbers = new TreeSet<>();
-        numbers.add(5);
-        numbers.add(1);
-        numbers.add(3);
-        numbers.add(7);
-        
-        // 自然排序输出
-        for (Integer num : numbers) {
-            System.out.println(num); // 1, 3, 5, 7
-        }
-        
-        // 特殊方法
-        System.out.println("最小: " + numbers.first());
-        System.out.println("最大: " + numbers.last());
-        System.out.println("小于5的最大: " + numbers.lower(5));
-        System.out.println("大于5的最小: " + numbers.higher(5));
+        ArrayList<String> sites = new ArrayList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
+        sites.remove(3); // 删除第四个元素
+        System.out.println(sites);
     }
 }
 ```
 
-## 四、Map 接口
+输出结果：
 
-### 4.1 HashMap
+```
+[Google, Runoob, Taobao]
+```
+
+### 2.6 计算大小
 
 ```java
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
-public class HashMapExample {
+public class RunoobTest {
     public static void main(String[] args) {
-        Map<String, Integer> scores = new HashMap<>();
-        
-        // 添加键值对
-        scores.put("张三", 90);
-        scores.put("李四", 85);
-        scores.put("王五", 95);
-        
-        // 获取值
-        int zhangScore = scores.get("张三");
-        System.out.println("张三的分数: " + zhangScore);
-        
-        // 修改值
-        scores.put("李四", 88);
-        
-        // 遍历方式1：遍历键
-        for (String name : scores.keySet()) {
-            System.out.println(name + ": " + scores.get(name));
-        }
-        
-        // 遍历方式2：遍历键值对
-        for (Map.Entry<String, Integer> entry : scores.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
-        
-        // 常用方法
-        System.out.println("大小: " + scores.size());
-        System.out.println("是否包含张三: " + scores.containsKey("张三"));
-        System.out.println("是否包含90分: " + scores.containsValue(90));
-        scores.remove("王五");
+        ArrayList<String> sites = new ArrayList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
+        System.out.println(sites.size());
     }
 }
 ```
 
-### 4.2 LinkedHashMap
+输出结果：
+
+```
+4
+```
+
+### 2.7 迭代数组列表
 
 ```java
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
-public class LinkedHashMapExample {
+public class RunoobTest {
     public static void main(String[] args) {
-        // 保持插入顺序
-        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        map.put("B", "Banana");
-        map.put("A", "Apple");
-        map.put("C", "Cherry");
+        ArrayList<String> sites = new ArrayList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
         
-        // 按插入顺序输出
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
+        // 使用 for 循环
+        for (int i = 0; i < sites.size(); i++) {
+            System.out.println(sites.get(i));
+        }
+        
+        // 使用 for-each
+        for (String i : sites) {
+            System.out.println(i);
         }
     }
 }
 ```
 
-### 4.3 TreeMap
+输出结果：
 
-```java
-import java.util.TreeMap;
-
-public class TreeMapExample {
-    public static void main(String[] args) {
-        // 按键排序
-        TreeMap<String, Integer> map = new TreeMap<>();
-        map.put("B", 2);
-        map.put("A", 1);
-        map.put("C", 3);
-        
-        // 按键的自然顺序输出
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
-    }
-}
+```
+Google
+Runoob
+Taobao
+Weibo
 ```
 
-## 五、Collections 工具类
+### 2.8 ArrayList 排序
 
 ```java
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        ArrayList<String> sites = new ArrayList<String>();
+        sites.add("Taobao");
+        sites.add("Wiki");
+        sites.add("Runoob");
+        sites.add("Weibo");
+        sites.add("Google");
+        
+        Collections.sort(sites); // 字母排序
+        
+        for (String i : sites) {
+            System.out.println(i);
+        }
+    }
+}
+```
+
+输出结果：
+
+```
+Google
+Runoob
+Taobao
+Weibo
+Wiki
+```
+
+---
+
+## 三、LinkedList
+
+LinkedList（链表）类似于 ArrayList，是一种常用的数据容器。与 ArrayList 相比，LinkedList 的增加和删除操作效率更高，而查找和修改的操作效率较低。
+
+### 3.1 创建 LinkedList
+
+```java
+import java.util.LinkedList;
+
+LinkedList<String> sites = new LinkedList<String>();
+```
+
+### 3.2 在列表开头添加元素
+
+```java
+import java.util.LinkedList;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        LinkedList<String> sites = new LinkedList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.addFirst("Wiki"); // 在头部添加元素
+        System.out.println(sites);
+    }
+}
+```
+
+输出结果：
+
+```
+[Wiki, Google, Runoob, Taobao]
+```
+
+### 3.3 在列表结尾添加元素
+
+```java
+import java.util.LinkedList;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        LinkedList<String> sites = new LinkedList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.addLast("Wiki"); // 在尾部添加元素
+        System.out.println(sites);
+    }
+}
+```
+
+输出结果：
+
+```
+[Google, Runoob, Taobao, Wiki]
+```
+
+### 3.4 在列表开头移除元素
+
+```java
+import java.util.LinkedList;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        LinkedList<String> sites = new LinkedList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
+        sites.removeFirst(); // 移除头部元素
+        System.out.println(sites);
+    }
+}
+```
+
+输出结果：
+
+```
+[Runoob, Taobao, Weibo]
+```
+
+### 3.5 在列表结尾移除元素
+
+```java
+import java.util.LinkedList;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        LinkedList<String> sites = new LinkedList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
+        sites.removeLast(); // 移除尾部元素
+        System.out.println(sites);
+    }
+}
+```
+
+输出结果：
+
+```
+[Google, Runoob, Taobao]
+```
+
+### 3.6 获取列表开头和结尾的元素
+
+```java
+import java.util.LinkedList;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        LinkedList<String> sites = new LinkedList<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Weibo");
+        
+        System.out.println(sites.getFirst()); // 获取头部元素
+        System.out.println(sites.getLast());  // 获取尾部元素
+    }
+}
+```
+
+输出结果：
+
+```
+Google
+Weibo
+```
+
+---
+
+## 四、HashSet
+
+HashSet 基于 HashMap 来实现的，是一个不允许有重复元素的集合。
+
+HashSet 允许有 null 值，是无序的，即不会记录插入的顺序。HashSet 不是线程安全的。
+
+### 4.1 创建 HashSet
+
+```java
+import java.util.HashSet;
+
+HashSet<String> sites = new HashSet<String>();
+```
+
+### 4.2 添加元素
+
+```java
+import java.util.HashSet;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashSet<String> sites = new HashSet<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Zhihu");
+        sites.add("Runoob"); // 重复的元素不会被添加
+        System.out.println(sites);
+    }
+}
+```
+
+输出结果：
+
+```
+[Google, Runoob, Zhihu, Taobao]
+```
+
+### 4.3 判断元素是否存在
+
+```java
+import java.util.HashSet;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashSet<String> sites = new HashSet<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Zhihu");
+        System.out.println(sites.contains("Taobao"));
+    }
+}
+```
+
+输出结果：
+
+```
+true
+```
+
+### 4.4 删除元素
+
+```java
+import java.util.HashSet;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashSet<String> sites = new HashSet<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Zhihu");
+        sites.remove("Taobao"); // 删除元素
+        System.out.println(sites);
+    }
+}
+```
+
+输出结果：
+
+```
+[Google, Runoob, Zhihu]
+```
+
+### 4.5 计算大小
+
+```java
+import java.util.HashSet;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashSet<String> sites = new HashSet<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Zhihu");
+        System.out.println(sites.size());
+    }
+}
+```
+
+输出结果：
+
+```
+4
+```
+
+### 4.6 迭代 HashSet
+
+```java
+import java.util.HashSet;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashSet<String> sites = new HashSet<String>();
+        sites.add("Google");
+        sites.add("Runoob");
+        sites.add("Taobao");
+        sites.add("Zhihu");
+        
+        for (String i : sites) {
+            System.out.println(i);
+        }
+    }
+}
+```
+
+输出结果：
+
+```
+Google
+Runoob
+Zhihu
+Taobao
+```
+
+---
+
+## 五、HashMap
+
+HashMap 是一个散列表，它存储的内容是键值对(key-value)映射。
+
+HashMap 实现了 Map 接口，根据键的 HashCode 值存储数据，具有很快的访问速度，最多允许一条记录的键为 null，不支持线程同步。
+
+### 5.1 创建 HashMap
+
+```java
+import java.util.HashMap;
+
+HashMap<Integer, String> sites = new HashMap<Integer, String>();
+```
+
+### 5.2 添加元素
+
+```java
+import java.util.HashMap;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashMap<Integer, String> sites = new HashMap<Integer, String>();
+        sites.put(1, "Google");
+        sites.put(2, "Runoob");
+        sites.put(3, "Taobao");
+        sites.put(4, "Zhihu");
+        System.out.println(sites);
+    }
+}
+```
+
+输出结果：
+
+```
+{1=Google, 2=Runoob, 3=Taobao, 4=Zhihu}
+```
+
+### 5.3 访问元素
+
+```java
+import java.util.HashMap;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashMap<Integer, String> sites = new HashMap<Integer, String>();
+        sites.put(1, "Google");
+        sites.put(2, "Runoob");
+        sites.put(3, "Taobao");
+        sites.put(4, "Zhihu");
+        System.out.println(sites.get(3));
+    }
+}
+```
+
+输出结果：
+
+```
+Taobao
+```
+
+### 5.4 删除元素
+
+```java
+import java.util.HashMap;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashMap<Integer, String> sites = new HashMap<Integer, String>();
+        sites.put(1, "Google");
+        sites.put(2, "Runoob");
+        sites.put(3, "Taobao");
+        sites.put(4, "Zhihu");
+        sites.remove(4);
+        System.out.println(sites);
+    }
+}
+```
+
+输出结果：
+
+```
+{1=Google, 2=Runoob, 3=Taobao}
+```
+
+### 5.5 计算大小
+
+```java
+import java.util.HashMap;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashMap<Integer, String> sites = new HashMap<Integer, String>();
+        sites.put(1, "Google");
+        sites.put(2, "Runoob");
+        sites.put(3, "Taobao");
+        sites.put(4, "Zhihu");
+        System.out.println(sites.size());
+    }
+}
+```
+
+输出结果：
+
+```
+4
+```
+
+### 5.6 迭代 HashMap
+
+```java
+import java.util.HashMap;
+
+public class RunoobTest {
+    public static void main(String[] args) {
+        HashMap<Integer, String> sites = new HashMap<Integer, String>();
+        sites.put(1, "Google");
+        sites.put(2, "Runoob");
+        sites.put(3, "Taobao");
+        sites.put(4, "Zhihu");
+        
+        // 输出 key 和 value
+        for (Integer i : sites.keySet()) {
+            System.out.println("key: " + i + " value: " + sites.get(i));
+        }
+        
+        // 返回所有 value 值
+        for (String value : sites.values()) {
+            System.out.print(value + ", ");
+        }
+    }
+}
+```
+
+输出结果：
+
+```
+key: 1 value: Google
+key: 2 value: Runoob
+key: 3 value: Taobao
+key: 4 value: Zhihu
+Google, Runoob, Taobao, Zhihu,
+```
+
+---
+
+## 六、Collections 工具类
+
+Collections 类提供了很多有用的方法，如排序、反转、打乱顺序等。
+
+```java
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class CollectionsExample {
     public static void main(String[] args) {
-        List<Integer> list = new ArrayList<>();
+        ArrayList<Integer> list = new ArrayList<>();
         list.add(3);
         list.add(1);
         list.add(4);
@@ -301,78 +671,30 @@ public class CollectionsExample {
         
         // 排序
         Collections.sort(list);
+        System.out.println("排序后: " + list);
         
         // 反转
         Collections.reverse(list);
+        System.out.println("反转后: " + list);
         
         // 打乱顺序
         Collections.shuffle(list);
+        System.out.println("打乱后: " + list);
         
         // 查找（需先排序）
         Collections.sort(list);
         int index = Collections.binarySearch(list, 3);
-        
-        // 填充
-        Collections.fill(list, 0);
+        System.out.println("3 的索引: " + index);
         
         // 最大值/最小值
         int max = Collections.max(list);
         int min = Collections.min(list);
+        System.out.println("最大值: " + max + ", 最小值: " + min);
     }
 }
 ```
 
-## 六、泛型
-
-### 6.1 泛型的使用
-
-```java
-// 定义泛型类
-public class Box<T> {
-    private T item;
-    
-    public void setItem(T item) {
-        this.item = item;
-    }
-    
-    public T getItem() {
-        return item;
-    }
-}
-
-// 使用泛型类
-public class BoxExample {
-    public static void main(String[] args) {
-        Box<String> stringBox = new Box<>();
-        stringBox.setItem("Hello");
-        String str = stringBox.getItem();
-        
-        Box<Integer> intBox = new Box<>();
-        intBox.setItem(123);
-        Integer num = intBox.getItem();
-    }
-}
-```
-
-### 6.2 泛型方法
-
-```java
-public class GenericMethodExample {
-    public static <T> void printArray(T[] array) {
-        for (T item : array) {
-            System.out.println(item);
-        }
-    }
-    
-    public static void main(String[] args) {
-        Integer[] intArray = {1, 2, 3, 4, 5};
-        String[] strArray = {"A", "B", "C"};
-        
-        printArray(intArray);
-        printArray(strArray);
-    }
-}
-```
+---
 
 ## 七、练习
 
