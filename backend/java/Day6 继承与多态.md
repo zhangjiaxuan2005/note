@@ -1,268 +1,426 @@
 # Day6 继承与多态
 
-## 一、继承的概念
+## 一、Java 继承
 
-### 1.1 继承的基本语法
+继承是 Java 面向对象编程技术的一块基石，它允许创建分等级层次的类。子类继承父类的特征和行为，使得子类对象具有父类的实例域和方法。
+
+### 1.1 类的继承格式
+
+在 Java 中通过 `extends` 关键字可以声明一个类是从另一个类继承而来的：
 
 ```java
-// 父类（基类）
+class 父类 { }
+class 子类 extends 父类 { }
+```
+
+### 1.2 为什么需要继承
+
+通过继承可以消除重复代码，提高代码复用性。例如：
+
+**公共父类 Animal：**
+
+```java
 public class Animal {
-    protected String name;
-    protected int age;
+    private String name;
+    private int id;
     
-    public Animal(String name, int age) {
-        this.name = name;
-        this.age = age;
+    public Animal(String myName, int myid) {
+        name = myName;
+        id = myid;
     }
     
     public void eat() {
-        System.out.println(name + "正在吃东西");
+        System.out.println(name + "正在吃");
     }
     
     public void sleep() {
-        System.out.println(name + "正在睡觉");
-    }
-}
-
-// 子类（派生类）使用 extends 关键字继承
-public class Dog extends Animal {
-    private String breed;
-    
-    public Dog(String name, int age, String breed) {
-        // 调用父类构造方法
-        super(name, age);
-        this.breed = breed;
+        System.out.println(name + "正在睡");
     }
     
-    // 子类特有方法
-    public void bark() {
-        System.out.println(name + "汪汪汪");
+    public void introduction() {
+        System.out.println("大家好！我是" + id + "号" + name + ".");
     }
 }
 ```
 
-### 1.2 super 关键字
+**子类 Penguin：**
 
 ```java
-public class Cat extends Animal {
-    public Cat(String name, int age) {
-        super(name, age); // 调用父类构造方法，必须在第一行
-    }
-    
-    @Override
-    public void eat() {
-        super.eat(); // 调用父类的 eat 方法
-        System.out.println(name + "喜欢吃鱼");
+public class Penguin extends Animal {
+    public Penguin(String myName, int myid) {
+        super(myName, myid);
     }
 }
 ```
 
-### 1.3 继承的特点
-- Java 只支持单继承，一个类只能有一个直接父类
-- 子类继承父类的所有非私有成员（属性和方法）
-- 子类可以扩展自己特有的属性和方法
-
-## 二、方法重写（Override）
-
-### 2.1 方法重写的规则
-- 方法名相同
-- 参数列表相同
-- 返回值类型相同或为其子类
-- 访问修饰符不能比父类更严格
+**子类 Mouse：**
 
 ```java
-public class Bird extends Animal {
-    public Bird(String name, int age) {
-        super(name, age);
-    }
-    
-    // 重写父类的 eat 方法
-    @Override
-    public void eat() {
-        System.out.println(name + "正在吃虫子");
-    }
-    
-    // 重写父类的 sleep 方法
-    @Override
-    public void sleep() {
-        System.out.println(name + "在树上睡觉");
-    }
-    
-    // 子类特有方法
-    public void fly() {
-        System.out.println(name + "正在飞翔");
+public class Mouse extends Animal {
+    public Mouse(String myName, int myid) {
+        super(myName, myid);
     }
 }
 ```
 
-### 2.2 @Override 注解
-- 用于标识这是一个重写方法
-- 编译器会检查是否符合重写规则
-- 提高代码可读性
+### 1.3 继承的特性
 
-## 三、多态
+- 子类拥有父类非 private 的属性、方法
+- 子类可以拥有自己的属性和方法，对父类进行扩展
+- 子类可以用自己的方式实现父类的方法
+- Java 的继承是单继承，但支持多重继承
+- 提高了类之间的耦合性（这也是继承的缺点）
 
-### 3.1 多态的概念
-- 同一个方法调用，根据对象的实际类型不同，执行不同的实现
-- 实现方式：方法重写 + 父类引用指向子类对象
+### 1.4 super 与 this 关键字
+
+**super 关键字：** 引用当前对象的父类成员
+
+**this 关键字：** 引用当前对象自身
 
 ```java
-public class Main {
+class Animal {
+    void eat() {
+        System.out.println("animal: eat");
+    }
+}
+
+class Dog extends Animal {
+    void eat() {
+        System.out.println("dog: eat");
+    }
+    
+    void eatTest() {
+        this.eat();   // 调用自己的 eat 方法
+        super.eat();  // 调用父类的 eat 方法
+    }
+}
+
+public class Test {
     public static void main(String[] args) {
-        // 父类引用指向子类对象
-        Animal animal1 = new Dog("旺财", 3, "金毛");
-        Animal animal2 = new Cat("咪咪", 2);
-        Animal animal3 = new Bird("小鸟", 1);
+        Animal a = new Animal();
+        a.eat();
         
-        // 调用同一个方法，表现出不同行为
-        animal1.eat(); // 输出：旺财正在吃东西（Dog 的实现）
-        animal2.eat(); // 输出：咪咪正在吃虫子（Cat 的实现）
-        animal3.eat(); // 输出：小鸟正在吃虫子（Bird 的实现）
+        Dog d = new Dog();
+        d.eatTest();
     }
 }
 ```
 
-### 3.2 多态的好处
-- 提高代码的可扩展性
-- 降低代码耦合度
-- 符合开闭原则
+输出结果：
 
-## 四、类型转换
-
-### 4.1 向上转型（自动转换）
-
-```java
-Animal animal = new Dog("旺财", 3, "金毛"); // 自动向上转型
+```
+animal: eat
+dog: eat
+animal: eat
 ```
 
-### 4.2 向下转型（强制转换）
+### 1.5 final 关键字
+
+final 可以用来修饰类、方法和变量：
 
 ```java
-Animal animal = new Dog("旺财", 3, "金毛");
+// final 类：不能被继承
+final class FinalClass { }
 
-// 需要强制转换
-Dog dog = (Dog) animal;
-dog.bark(); // 调用 Dog 特有方法
+// final 方法：不能被子类重写
+class Parent {
+    final public void method() { }
+}
+
+// final 变量：常量，不能修改
+class Example {
+    final int MAX_VALUE = 100;
+}
 ```
 
-### 4.3 instanceof 关键字
+### 1.6 构造器的调用
+
+子类不继承父类的构造器，但可以通过 `super` 调用：
 
 ```java
-Animal animal = new Dog("旺财", 3, "金毛");
+class SuperClass {
+    public SuperClass() {
+        System.out.println("SuperClass()");
+    }
+    
+    public SuperClass(int n) {
+        System.out.println("SuperClass(int n)");
+    }
+}
 
-// 判断对象是否为指定类型
+class SubClass extends SuperClass {
+    public SubClass() {
+        super(); // 调用父类无参构造器
+        System.out.println("SubClass()");
+    }
+    
+    public SubClass(int n) {
+        super(300); // 调用父类有参构造器
+        System.out.println("SubClass(int n): " + n);
+    }
+}
+```
+
+---
+
+## 二、重写(Override)与重载(Overload)
+
+### 2.1 重写(Override)
+
+重写是子类定义了一个与其父类具有相同名称、参数列表和返回类型的方法。
+
+```java
+class Animal {
+    public void move() {
+        System.out.println("动物可以移动");
+    }
+}
+
+class Dog extends Animal {
+    public void move() {
+        System.out.println("狗可以跑和走");
+    }
+}
+
+public class TestDog {
+    public static void main(String args[]) {
+        Animal a = new Animal();
+        Animal b = new Dog();
+        
+        a.move(); // 调用 Animal 类的方法
+        b.move(); // 调用 Dog 类的方法
+    }
+}
+```
+
+输出结果：
+
+```
+动物可以移动
+狗可以跑和走
+```
+
+### 2.2 方法重写规则
+
+- 参数列表必须完全相同
+- 返回类型必须相同（Java 7+ 可以是父类返回值的派生类）
+- 访问权限不能比父类更低
+- final 方法不能被重写
+- 静态方法不能被重写，但可以被再次声明
+
+### 2.3 使用 super 调用父类方法
+
+```java
+class Animal {
+    public void move() {
+        System.out.println("动物可以移动");
+    }
+}
+
+class Dog extends Animal {
+    public void move() {
+        super.move(); // 调用父类方法
+        System.out.println("狗可以跑和走");
+    }
+}
+```
+
+### 2.4 重载(Overload)
+
+重载是在一个类里面，方法名字相同，参数不同：
+
+```java
+public class Overloading {
+    public int test() {
+        System.out.println("test1");
+        return 1;
+    }
+    
+    public void test(int a) {
+        System.out.println("test2");
+    }
+    
+    public String test(int a, String s) {
+        System.out.println("test3");
+        return "returntest3";
+    }
+    
+    public String test(String s, int a) {
+        System.out.println("test4");
+        return "returntest4";
+    }
+}
+```
+
+### 2.5 重写与重载的区别
+
+| 区别点 | 重载方法 | 重写方法 |
+| --- | --- | --- |
+| 参数列表 | 必须修改 | 一定不能修改 |
+| 返回类型 | 可以修改 | 一定不能修改 |
+| 异常 | 可以修改 | 可以减少或删除，不能抛出新的或更广的异常 |
+| 访问 | 可以修改 | 不能做更严格的限制 |
+
+---
+
+## 三、Java 多态
+
+多态是同一个行为具有多个不同表现形式或形态的能力。
+
+### 3.1 多态存在的三个必要条件
+
+1. **继承**
+2. **重写**
+3. **父类引用指向子类对象**
+
+### 3.2 多态示例
+
+```java
+abstract class Animal {
+    abstract void eat();
+}
+
+class Cat extends Animal {
+    public void eat() {
+        System.out.println("吃鱼");
+    }
+    
+    public void work() {
+        System.out.println("抓老鼠");
+    }
+}
+
+class Dog extends Animal {
+    public void eat() {
+        System.out.println("吃骨头");
+    }
+    
+    public void work() {
+        System.out.println("看家");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        show(new Cat());
+        show(new Dog());
+        
+        Animal a = new Cat();
+        a.eat();
+        Cat c = (Cat) a;
+        c.work();
+    }
+    
+    public static void show(Animal a) {
+        a.eat();
+        if (a instanceof Cat) {
+            Cat c = (Cat) a;
+            c.work();
+        } else if (a instanceof Dog) {
+            Dog c = (Dog) a;
+            c.work();
+        }
+    }
+}
+```
+
+输出结果：
+
+```
+吃鱼
+抓老鼠
+吃骨头
+看家
+吃鱼
+抓老鼠
+```
+
+### 3.3 多态的优点
+
+- 消除类型之间的耦合关系
+- 可替换性
+- 可扩充性
+- 接口性
+- 灵活性
+- 简化性
+
+### 3.4 类型转换
+
+**向上转型（自动）：**
+
+```java
+Animal animal = new Dog("旺财", 3); // 自动向上转型
+```
+
+**向下转型（强制）：**
+
+```java
+Animal animal = new Dog("旺财", 3);
+Dog dog = (Dog) animal; // 需要强制转换
+```
+
+**instanceof 关键字：**
+
+```java
 if (animal instanceof Dog) {
     Dog dog = (Dog) animal;
-    dog.bark();
-} else if (animal instanceof Cat) {
-    Cat cat = (Cat) animal;
-    // ...
+    dog.work();
 }
 ```
 
-### 4.4 Java 14+ 模式匹配
+---
+
+## 四、Object 类
+
+Object 是所有类的根类，所有类默认继承 Object。
+
+### 4.1 Object 类的常用方法
+
+**equals 方法：** 比较两个对象是否相等
 
 ```java
-if (animal instanceof Dog dog) {
-    dog.bark(); // 直接使用，无需强制转换
+@Override
+public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    Person person = (Person) obj;
+    return age == person.age && Objects.equals(name, person.name);
 }
 ```
 
-## 五、final 关键字
-
-### 5.1 final 修饰类
+**hashCode 方法：** 返回对象的哈希码
 
 ```java
-// 不能被继承
-final public class FinalClass {
-    // ...
+@Override
+public int hashCode() {
+    return Objects.hash(name, age);
 }
 ```
 
-### 5.2 final 修饰方法
+**toString 方法：** 返回对象的字符串表示
 
 ```java
-public class Parent {
-    // 不能被子类重写
-    final public void method() {
-        // ...
-    }
+@Override
+public String toString() {
+    return "Person{" + "name='" + name + '\'' + ", age=" + age + '}';
 }
 ```
 
-### 5.3 final 修饰变量
-
-```java
-public class Example {
-    final int MAX_VALUE = 100; // 常量，不能修改
-    final String NAME;
-    
-    public Example() {
-        NAME = "固定值"; // 可以在构造方法中赋值一次
-    }
-}
-```
-
-## 六、Object 类
-
-### 6.1 Object 是所有类的根类
-
-```java
-// 所有类默认继承 Object
-public class Person extends Object {
-    // ...
-}
-```
-
-### 6.2 Object 类的常用方法
-
-```java
-public class Person {
-    private String name;
-    private int age;
-    
-    // equals 方法：比较两个对象是否相等
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Person person = (Person) obj;
-        return age == person.age && Objects.equals(name, person.name);
-    }
-    
-    // hashCode 方法：返回对象的哈希码
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, age);
-    }
-    
-    // toString 方法：返回对象的字符串表示
-    @Override
-    public String toString() {
-        return "Person{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
-    }
-}
-```
-
-### 6.3 == 与 equals 的区别
+### 4.2 == 与 equals 的区别
 
 ```java
 String str1 = "Hello";
 String str2 = "Hello";
 String str3 = new String("Hello");
 
-// == 比较引用（地址）
-System.out.println(str1 == str2);   // true（同一对象）
-System.out.println(str1 == str3);   // false（不同对象）
-
-// equals 比较内容
-System.out.println(str1.equals(str3)); // true
+System.out.println(str1 == str2);        // true（同一对象）
+System.out.println(str1 == str3);        // false（不同对象）
+System.out.println(str1.equals(str3));   // true（内容相同）
 ```
 
-## 七、练习
+---
+
+## 五、练习
 
 1. 创建一个 `Shape` 父类，包含计算面积的方法，然后创建 `Circle`、`Rectangle`、`Triangle` 子类继承并实现具体的面积计算
 2. 创建一个 `Employee` 父类，包含姓名、工号属性和工作方法，然后创建 `Manager`、`Developer`、`Tester` 子类
