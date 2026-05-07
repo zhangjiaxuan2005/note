@@ -1,42 +1,122 @@
 # Day10 IO流与文件操作
 
-## 一、IO流概述
+## 一、Java 流(Stream)、文件(File)和IO
 
-### 1.1 流的分类
+Java 中的流（Stream）、文件（File）和 IO（输入输出）是处理数据读取和写入的基础设施，它们允许程序与外部数据（如文件、网络、系统输入等）进行交互。
+
+java.io 包是 Java 标准库中的一个核心包，提供了用于系统输入和输出的类，它包含了处理数据流（字节流和字符流）、文件读写、序列化以及数据格式化的工具。
+
+一个流可以理解为一个数据的序列。输入流表示从一个源读取数据，输出流表示向一个目标写数据。
+
+### 1.1 字节流和字符流
+
+| 类型 | 处理单位 | 适用场景 |
+| --- | --- | --- |
+| 字节流 | 字节（8位） | 二进制文件（图片、音频、视频） |
+| 字符流 | 字符（16位） | 文本文件 |
+
+---
+
+## 二、读取控制台输入
+
+Java 的控制台输入由 System.in 完成。为了获得一个绑定到控制台的字符流，可以把 System.in 包装在一个 BufferedReader 对象中来创建一个字符流。
+
+### 2.1 从控制台读取多字符输入
+
+**BRRead.java 文件代码：**
+
+```java
+import java.io.*;
+
+public class BRRead {
+    public static void main(String[] args) throws IOException {
+        char c;
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("输入字符, 按下 'q' 键退出。");
+        do {
+            c = (char) br.read();
+            System.out.println(c);
+        } while (c != 'q');
+    }
+}
+```
+
+输出结果：
 
 ```
-IO流
-├── 字节流
-│   ├── InputStream（输入）
-│   │   ├── FileInputStream
-│   │   ├── BufferedInputStream
-│   │   └── DataInputStream
-│   └── OutputStream（输出）
-│       ├── FileOutputStream
-│       ├── BufferedOutputStream
-│       └── DataOutputStream
-└── 字符流
-    ├── Reader（输入）
-    │   ├── FileReader
-    │   ├── BufferedReader
-    │   └── InputStreamReader
-    └── Writer（输出）
-        ├── FileWriter
-        ├── BufferedWriter
-        └── OutputStreamWriter
+输入字符, 按下 'q' 键退出。
+runoob
+r
+u
+n
+o
+o
+b
+
+q
+q
 ```
 
-### 1.2 字节流 vs 字符流
+### 2.2 从控制台读取字符串
 
-| 特性 | 字节流 | 字符流 |
-|------|--------|--------|
-| 处理单位 | 字节（8位） | 字符（16位） |
-| 适用场景 | 二进制文件（图片、音频、视频） | 文本文件 |
-| 编码处理 | 不处理编码 | 自动处理编码 |
+**BRReadLines.java 文件代码：**
 
-## 二、字节流
+```java
+import java.io.*;
 
-### 2.1 FileInputStream
+public class BRReadLines {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String str;
+        System.out.println("Enter lines of text.");
+        System.out.println("Enter 'end' to quit.");
+        do {
+            str = br.readLine();
+            System.out.println(str);
+        } while (!str.equals("end"));
+    }
+}
+```
+
+输出结果：
+
+```
+Enter lines of text.
+Enter 'end' to quit.
+This is line one
+This is line one
+This is line two
+This is line two
+end
+end
+```
+
+---
+
+## 三、FileInputStream
+
+该流用于从文件读取数据，它的对象可以用关键字 new 来创建。
+
+### 3.1 创建 FileInputStream
+
+```java
+// 使用字符串类型的文件名
+InputStream f = new FileInputStream("C:/java/hello");
+
+// 使用文件对象
+File f = new File("C:/java/hello");
+InputStream in = new FileInputStream(f);
+```
+
+### 3.2 FileInputStream 方法
+
+| 方法 | 描述 |
+| --- | --- |
+| `int read()` | 读取一个字节的数据，返回值为 0 到 255 之间的整数。如果到达流的末尾，返回 -1 |
+| `int read(byte[] b)` | 从输入流中读取字节，并将其存储在字节数组 b 中，返回实际读取的字节数 |
+| `void close()` | 关闭输入流并释放与该流相关的所有资源 |
+
+### 3.3 读取文件示例
 
 ```java
 import java.io.FileInputStream;
@@ -56,7 +136,33 @@ public class FileInputStreamExample {
 }
 ```
 
-### 2.2 FileOutputStream
+---
+
+## 四、FileOutputStream
+
+该类用来创建一个文件并向文件中写数据。如果该流在打开文件进行输出前，目标文件不存在，那么该流会创建该文件。
+
+### 4.1 创建 FileOutputStream
+
+```java
+// 使用字符串类型的文件名
+OutputStream f = new FileOutputStream("C:/java/hello");
+
+// 使用文件对象
+File f = new File("C:/java/hello");
+OutputStream fOut = new FileOutputStream(f);
+```
+
+### 4.2 FileOutputStream 方法
+
+| 方法 | 描述 |
+| --- | --- |
+| `void write(int b)` | 将指定的字节写入输出流 |
+| `void write(byte[] b)` | 将字节数组 b 中的所有字节写入输出流 |
+| `void flush()` | 刷新输出流并强制写出所有缓冲的数据 |
+| `void close()` | 关闭输出流并释放与该流相关的所有资源 |
+
+### 4.3 写入文件示例
 
 ```java
 import java.io.FileOutputStream;
@@ -67,7 +173,6 @@ public class FileOutputStreamExample {
         String content = "Hello, World!";
         
         try (FileOutputStream fos = new FileOutputStream("output.txt")) {
-            // 写入字节数组
             fos.write(content.getBytes());
             System.out.println("文件写入成功");
         } catch (IOException e) {
@@ -77,38 +182,43 @@ public class FileOutputStreamExample {
 }
 ```
 
-### 2.3 字节流复制文件
+### 4.4 字节流复制文件
+
+**fileStreamTest.java 文件代码：**
 
 ```java
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
-public class FileCopyExample {
+public class fileStreamTest {
     public static void main(String[] args) {
-        String source = "source.jpg";
-        String dest = "dest.jpg";
-        
-        try (FileInputStream fis = new FileInputStream(source);
-             FileOutputStream fos = new FileOutputStream(dest)) {
-            
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                fos.write(buffer, 0, bytesRead);
+        try {
+            byte bWrite[] = { 11, 21, 3, 40, 5 };
+            OutputStream os = new FileOutputStream("test.txt");
+            for (int x = 0; x < bWrite.length; x++) {
+                os.write(bWrite[x]);
             }
-            System.out.println("文件复制成功");
+            os.close();
+            
+            InputStream is = new FileInputStream("test.txt");
+            int size = is.available();
+            for (int i = 0; i < size; i++) {
+                System.out.print((char) is.read() + " ");
+            }
+            is.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.print("Exception");
         }
     }
 }
 ```
 
-## 三、字符流
+---
 
-### 3.1 FileReader
+## 五、字符流
+
+字符流用于处理文本数据，例如读取和写入字符串或文件。
+
+### 5.1 FileReader
 
 ```java
 import java.io.FileReader;
@@ -128,7 +238,7 @@ public class FileReaderExample {
 }
 ```
 
-### 3.2 FileWriter
+### 5.2 FileWriter
 
 ```java
 import java.io.FileWriter;
@@ -148,99 +258,138 @@ public class FileWriterExample {
 }
 ```
 
-### 3.3 BufferedReader
+### 5.3 BufferedReader
+
+**fileStreamTest2.java 文件代码：**
 
 ```java
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
-public class BufferedReaderExample {
+public class fileStreamTest2 {
+    public static void main(String[] args) throws IOException {
+        File f = new File("a.txt");
+        FileOutputStream fop = new FileOutputStream(f);
+        OutputStreamWriter writer = new OutputStreamWriter(fop, "UTF-8");
+        writer.append("中文输入");
+        writer.append("\r\n");
+        writer.append("English");
+        writer.close();
+        fop.close();
+        
+        FileInputStream fip = new FileInputStream(f);
+        InputStreamReader reader = new InputStreamReader(fip, "UTF-8");
+        StringBuffer sb = new StringBuffer();
+        while (reader.ready()) {
+            sb.append((char) reader.read());
+        }
+        System.out.println(sb.toString());
+        reader.close();
+        fip.close();
+    }
+}
+```
+
+---
+
+## 六、File 类
+
+File 类用于表示文件或目录，并提供文件操作，如创建、删除、重命名等。
+
+### 6.1 创建目录
+
+File 类中有两个方法可以用来创建文件夹：
+
+- **mkdir()** 方法创建一个文件夹，成功则返回 true，失败则返回 false
+- **mkdirs()** 方法创建一个文件夹和它的所有父文件夹
+
+**CreateDir.java 文件代码：**
+
+```java
+import java.io.File;
+
+public class CreateDir {
     public static void main(String[] args) {
-        try (BufferedReader reader = new BufferedReader(new FileReader("input.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+        String dirname = "/tmp/user/java/bin";
+        File d = new File(dirname);
+        d.mkdirs();
+    }
+}
+```
+
+### 6.2 读取目录
+
+**DirList.java 文件代码：**
+
+```java
+import java.io.File;
+
+public class DirList {
+    public static void main(String args[]) {
+        String dirname = "/tmp";
+        File f1 = new File(dirname);
+        if (f1.isDirectory()) {
+            System.out.println("目录 " + dirname);
+            String s[] = f1.list();
+            for (int i = 0; i < s.length; i++) {
+                File f = new File(dirname + "/" + s[i]);
+                if (f.isDirectory()) {
+                    System.out.println(s[i] + " 是一个目录");
+                } else {
+                    System.out.println(s[i] + " 是一个文件");
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            System.out.println(dirname + " 不是一个目录");
         }
     }
 }
 ```
 
-### 3.4 BufferedWriter
+输出结果：
 
-```java
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-
-public class BufferedWriterExample {
-    public static void main(String[] args) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))) {
-            writer.write("第一行");
-            writer.newLine(); // 换行
-            writer.write("第二行");
-            writer.newLine();
-            writer.write("第三行");
-            System.out.println("文件写入成功");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
+```
+目录 /tmp
+bin 是一个目录
+lib 是一个目录
+demo 是一个目录
+test.txt 是一个文件
+README 是一个文件
+index.html 是一个文件
+include 是一个目录
 ```
 
-## 四、转换流
+### 6.3 删除目录或文件
 
-### 4.1 InputStreamReader
+删除文件可以使用 java.io.File.delete() 方法。
+
+**DeleteFileDemo.java 文件代码：**
 
 ```java
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
+import java.io.File;
 
-public class InputStreamReaderExample {
+public class DeleteFileDemo {
     public static void main(String[] args) {
-        try (FileInputStream fis = new FileInputStream("input.txt");
-             InputStreamReader isr = new InputStreamReader(fis, "UTF-8")) {
-            
-            int data;
-            while ((data = isr.read()) != -1) {
-                System.out.print((char) data);
+        File folder = new File("/tmp/java/");
+        deleteFolder(folder);
+    }
+    
+    public static void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteFolder(f);
+                } else {
+                    f.delete();
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        folder.delete();
     }
 }
 ```
 
-### 4.2 OutputStreamWriter
-
-```java
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-public class OutputStreamWriterExample {
-    public static void main(String[] args) {
-        try (FileOutputStream fos = new FileOutputStream("output.txt");
-             OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8")) {
-            
-            osw.write("中文内容");
-            System.out.println("文件写入成功");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-## 五、File 类
-
-### 5.1 文件操作
+### 6.4 文件操作示例
 
 ```java
 import java.io.File;
@@ -277,45 +426,11 @@ public class FileExample {
 }
 ```
 
-### 5.2 目录操作
+---
 
-```java
-import java.io.File;
+## 七、NIO（Java 7+）
 
-public class DirectoryExample {
-    public static void main(String[] args) {
-        File dir = new File("mydir");
-        
-        // 创建目录
-        if (dir.mkdir()) {
-            System.out.println("目录创建成功");
-        }
-        
-        // 创建多级目录
-        File nestedDir = new File("parent/child/grandchild");
-        if (nestedDir.mkdirs()) {
-            System.out.println("多级目录创建成功");
-        }
-        
-        // 列出目录内容
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                System.out.println(file.getName());
-            }
-        }
-        
-        // 删除目录（必须为空）
-        if (dir.delete()) {
-            System.out.println("目录删除成功");
-        }
-    }
-}
-```
-
-## 六、NIO（Java 7+）
-
-### 6.1 Path 与 Files
+### 7.1 Path 与 Files
 
 ```java
 import java.nio.file.Files;
@@ -361,7 +476,7 @@ public class NIOExample {
 }
 ```
 
-### 6.2 文件遍历
+### 7.2 文件遍历
 
 ```java
 import java.nio.file.Files;
@@ -384,7 +499,9 @@ public class FileWalkExample {
 }
 ```
 
-## 七、练习
+---
+
+## 八、练习
 
 1. 使用字节流复制图片文件
 2. 使用字符流读取文本文件并统计行数
